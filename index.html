@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encontro de fim de ano turma do HP</title>
+  <meta property="og:title" content="Encontro de fim de ano turma do HP">
+  <meta property="og:description" content="18/12/2026 a partir das 18h • Churrasqueira 3 do HP • R$ 57,00">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      line-height: 1.5;
+      padding: 76px 14px 40px;
+    }
+    .topo-fixo {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      background: #0f172a;
+      color: #fff;
+      padding: 10px;
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .topo-fixo span { font-size: 13px; color: #cbd5e1; font-weight: 600; }
+    .relogio { display: flex; gap: 6px; }
+    .caixa-tempo {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 8px;
+      text-align: center;
+      min-width: 44px;
+    }
+    .caixa-tempo strong { display: block; font-size: 15px; color: #f59e0b; line-height: 1.1; }
+    .caixa-tempo small { font-size: 10px; color: #94a3b8; text-transform: uppercase; }
+
+    .container { max-width: 580px; margin: 0 auto; }
+
+    .capa {
+      background: linear-gradient(135deg, #c2410c, #7c2d12);
+      color: #fff;
+      border-radius: 18px;
+      padding: 26px 20px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .capa h1 { font-size: 24px; margin-bottom: 14px; line-height: 1.25; }
+    .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .tag {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #e2e8f0;
+    }
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .aviso-laranja {
+      background: #fff7ed;
+      border-left: 4px solid #ea580c;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .lista-prog { list-style: none; }
+    .lista-prog li { display: flex; gap: 10px; margin-bottom: 12px; font-size: 15px; }
+    .hora {
+      background: #ffedd5;
+      color: #9a3412;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      height: fit-content;
+      font-size: 13px;
+    }
+    .aviso-chopp {
+      margin-top: 10px;
+      background: #fefce8;
+      border: 1px solid #fde047;
+      color: #854d0e;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .linha-custo {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+    }
+    .resp {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+    }
+
+    .resumo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .box-total {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .box-total.verde { background: #ecfdf5; border-color: #6ee7b7; }
+    .box-total span { display: block; font-size: 12px; color: #64748b; }
+    .box-total strong { font-size: 19px; color: #0f172a; }
+    .box-total.verde strong { color: #047857; }
+    .box-total small { display: block; font-size: 11px; color: #059669; }
+
+    .lista-nomes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      list-style: none;
+    }
+    .lista-nomes li {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .pix-card { text-align: center; background: #f0fdfa; border-color: #5eead4; }
+    .chave {
+      background: #fff;
+      border: 1px dashed #0d9488;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f766e;
+      margin: 12px 0;
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      background: #0d9488;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topo-fixo">
+    <span>⏳ Faltam:</span>
+    <div class="relogio" id="relogio">
+      <div class="caixa-tempo"><strong id="d">00</strong><small>Dias</small></div>
+      <div class="caixa-tempo"><strong id="h">00</strong><small>Horas</small></div>
+      <div class="caixa-tempo"><strong id="m">00</strong><small>Min</small></div>
+      <div class="caixa-tempo"><strong id="s">00</strong><small>Seg</small></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="capa">
+      <h1>🎉 Encontro de fim de ano turma do HP</h1>
+      <div class="tags">
+        <span class="tag">📅 18.12.26</span>
+        <span class="tag">⏰ A partir das 18h</span>
+        <span class="tag">📍 Churrasqueira 3 do HP</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🥩 Cardápio</h2>
+      <div class="aviso-laranja">
+        <strong>Churrasco:</strong> cada um leva um pedaço de carne e preparamos juntos!
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎶 Programação</h2>
+      <ul class="lista-prog">
+        <li><span class="hora">18h00</span> <span>🔥 Churrasqueira será acendida.</span></li>
+        <li><span class="hora">18h30</span> <span>🍢 Carnes começarão a ser servidas como aperitivo aos presentes.</span></li>
+        <li><span class="hora">20h00</span> <span>🎸 Música ao vivo com voz e violão até 23h.</span></li>
+      </ul>
+      <div class="aviso-chopp">
+        🍺 Durante todo o evento haverá <strong>chopp disponível</strong> aos participantes que optarem.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💰 Custos Gerais</h2>
+      <div class="linha-custo">
+        <span>🧹 Churrasqueira com limpeza <span class="resp">Rodrigo</span></span>
+        <strong>R$ 150,00</strong>
+      </div>
+      <div class="linha-custo">
+        <span>🪵 Carvão <span class="resp">João</span></span>
+        <strong>R$ 30,00</strong>
+      </div>
+      <div class="linha-custo">
+        <span>🎤 Músico <span class="resp">João</span></span>
+        <strong>R$ 500,00</strong>
+      </div>
+      <div class="resumo">
+        <div class="box-total">
+          <span>Total Geral (12 pessoas)</span>
+          <strong>R$ 680,00</strong>
+        </div>
+        <div class="box-total verde">
+          <span>Valor por Pessoa</span>
+          <strong>R$ 57,00</strong>
+          <small>(exato: R$ 56,67)</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>👥 Participantes (12)</h2>
+      <ul class="lista-nomes">
+        <li>1. João</li>
+        <li>2. Cintia</li>
+        <li>3. Bruno</li>
+        <li>4. Edi</li>
+        <li>5. Marcos</li>
+        <li>6. Suzi</li>
+        <li>7. Geyson</li>
+        <li>8. Mara</li>
+        <li>9. Estevão</li>
+        <li>10. Teresina</li>
+        <li>11. Rodrigo</li>
+        <li>12. Dani</li>
+      </ul>
+    </div>
+
+    <div class="card pix-card">
+      <h2 style="border:none; padding:0;">📲 Chave Pix do Evento</h2>
+      <p style="font-size:14px; color:#475569; margin-top:4px;">Valor por pessoa: <strong>R$ 57,00</strong></p>
+      <div class="chave">48998661960</div>
+      <button id="btnPix" onclick="copiar()">📋 Copiar Chave Pix</button>
+    </div>
+  </div>
+
+  <script>
+    var dataEvento = new Date(2026, 11, 18, 18, 0, 0).getTime();
+    function atualizarContador() {
+      var agora = new Date().getTime();
+      var falta = dataEvento - agora;
+      if (falta <= 0) {
+        document.getElementById("relogio").innerHTML = "<strong>🎉 Já começou!</strong>";
+        return;
+      }
+      var d = Math.floor(falta / 86400000);
+      var h = Math.floor((falta % 86400000) / 3600000);
+      var m = Math.floor((falta % 3600000) / 60000);
+      var s = Math.floor((falta % 60000) / 1000);
+      document.getElementById("d").textContent = d < 10 ? "0" + d : d;
+      document.getElementById("h").textContent = h < 10 ? "0" + h : h;
+      document.getElementById("m").textContent = m < 10 ? "0" + m : m;
+      document.getElementById("s").textContent = s < 10 ? "0" + s : s;
+    }
+    atualizarContador();
+    setInterval(atualizarContador, 1000);
+
+    function copiar() {
+      var chave = "48998661960";
+      var btn = document.getElementById("btnPix");
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(chave).then(function() {
+          confirmar(btn);
+        }).catch(function() {
+          copiaFallback(chave, btn);
+        });
+      } else {
+        copiaFallback(chave, btn);
+      }
+    }
+
+    function copiaFallback(texto, btn) {
+      var campo = document.createElement("textarea");
+      campo.value = texto;
+      campo.style.position = "fixed";
+      campo.style.opacity = "0";
+      document.body.appendChild(campo);
+      campo.focus();
+      campo.select();
+      try {
+        document.execCommand("copy");
+        confirmar(btn);
+      } catch (e) {
+        alert("Chave Pix: " + texto);
+      }
+      document.body.removeChild(campo);
+    }
+
+    function confirmar(btn) {
+      btn.textContent = "✅ Chave Pix copiada!";
+      btn.style.background = "#16a34a";
+      setTimeout(function() {
+        btn.textContent = "📋 Copiar Chave Pix";
+        btn.style.background = "#0d9488";
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
