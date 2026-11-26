@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rateio Compartilhado</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      color: #222;
+      background-color: #f9f9fb;
+    }
+    .status {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 0.3rem;
+    }
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    input[type="text"] { flex: 2; }
+    input[type="number"] { flex: 1; }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .btn-add { background-color: #16a34a; color: white; }
+    .btn-add:hover { background-color: #15803d; }
+    .btn-remove {
+      background-color: #ef4444;
+      color: white;
+      padding: 0.25rem 0.6rem;
+      line-height: 1;
+    }
+    .btn-remove:hover { background-color: #dc2626; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th:last-child, td:last-child { text-align: right; width: 50px; }
+    .resumo {
+      background: #1e293b;
+      color: white;
+      padding: 1.2rem;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .resumo div span { display: block; font-size: 0.85rem; color: #94a3b8; }
+    .resumo div strong { font-size: 1.4rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Divisão de Custos</h1>
+  <div class="status" id="statusConexao">Carregando dados...</div>
+
+  <h2>1. Pessoas</h2>
+  <div class="input-group">
+    <input type="text" id="nomePessoa" placeholder="Nome da pessoa" onkeypress="if(event.key==='Enter') adicionarPessoa()">
+    <button class="btn-add" onclick="adicionarPessoa()">+ Adicionar</button>
+  </div>
+  <table>
+    <thead><tr><th>Nome</th><th>Remover</th></tr></thead>
+    <tbody id="tabelaPessoas"></tbody>
+  </table>
+
+  <h2>2. Custos</h2>
+  <div class="input-group">
+    <input type="text" id="descCusto" placeholder="Descrição (ex: Mercado)" onkeypress="if(event.key==='Enter') adicionarCusto()">
+    <input type="number" id="valorCusto" placeholder="Valor (R$)" step="0.01" min="0" onkeypress="if(event.key==='Enter') adicionarCusto()">
+    <button class="btn-add" onclick="adicionarCusto()">+ Adicionar</button>
+  </div>
+  <table>
+    <thead><tr><th>Descrição</th><th>Valor</th><th>Remover</th></tr></thead>
+    <tbody id="tabelaCustos"></tbody>
+  </table>
+
+  <div class="resumo">
+    <div>
+      <span>Total de Custos</span>
+      <strong id="totalCustos">R$ 0,00</strong>
+    </div>
+    <div style="text-align: right;">
+      <span>Valor por Pessoa (<span id="qtdPessoas" style="display:inline; color:inherit;">0</span>)</span>
+      <strong id="valorPorPessoa">R$ 0,00</strong>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://vugnslcstymsfjfwotxa.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_mpwS-IfssqsIhec_1toOew_5GddRWyc";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let listaPessoas = [];
+    let listaCustos = [];
+
+    const formatarMoeda = (v) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    async function carregarTudo() {
+      const [resPessoas, resCustos] = await Promise.all([
+        supabase.from('pessoas').select('*').order('id', { ascending: true }),
+        supabase.from('custos').select('*').order('id', { ascending: true })
+      ]);
+
+      if (resPessoas.error || resCustos.error) {
+        document.getElementById('statusConexao').textContent = "Erro ao conectar ao Supabase. Verifique se as tabelas foram criadas no SQL Editor.";
+        return;
+      }
+
+      listaPessoas = resPessoas.data || [];
+      listaCustos = resCustos.data || [];
+      document.getElementById('statusConexao').textContent = "Salvo no Supabase";
+      atualizarTela();
+    }
+
+    window.adicionarPessoa = async () => {
+      const input = document.getElementById('nomePessoa');
+      const nome = input.value.trim();
+      if (!nome) return;
+
+      const { error } = await supabase.from('pessoas').insert([{ nome }]);
+      if (!error) {
+        input.value = '';
+        input.focus();
+        await carregarTudo();
+      }
+    };
+
+    window.removerPessoa = async (id) => {
+      const { error } = await supabase.from('pessoas').delete().eq('id', id);
+      if (!error) await carregarTudo();
+    };
+
+    window.adicionarCusto = async () => {
+      const inputDesc = document.getElementById('descCusto');
+      const inputValor = document.getElementById('valorCusto');
+      const descricao = inputDesc.value.trim() || 'Item sem descrição';
+      const valor = parseFloat(inputValor.value);
+
+      if (isNaN(valor) || valor <= 0) {
+        alert('Insira um valor válido maior que zero.');
+        return;
+      }
+
+      const { error } = await supabase.from('custos').insert([{ descricao, valor }]);
+      if (!error) {
+        inputDesc.value = '';
+        inputValor.value = '';
+        inputDesc.focus();
+        await carregarTudo();
+      }
+    };
+
+    window.removerCusto = async (id) => {
+      const { error } = await supabase.from('custos').delete().eq('id', id);
+      if (!error) await carregarTudo();
+    };
+
+    function atualizarTela() {
+      const tbodyPessoas = document.getElementById('tabelaPessoas');
+      tbodyPessoas.innerHTML = '';
+
+      listaPessoas.forEach((pessoa) => {
+        tbodyPessoas.innerHTML += `
+          <tr>
+            <td>${pessoa.nome}</td>
+            <td><button class="btn-remove" onclick="removerPessoa(${pessoa.id})" title="Remover">&minus;</button></td>
+          </tr>
+        `;
+      });
+
+      const tbodyCustos = document.getElementById('tabelaCustos');
+      tbodyCustos.innerHTML = '';
+      let total = 0;
+
+      listaCustos.forEach((custo) => {
+        const valorNum = Number(custo.valor) || 0;
+        total += valorNum;
+        tbodyCustos.innerHTML += `
+          <tr>
+            <td>${custo.descricao}</td>
+            <td>${formatarMoeda(valorNum)}</td>
+            <td><button class="btn-remove" onclick="removerCusto(${custo.id})" title="Remover">&minus;</button></td>
+          </tr>
+        `;
+      });
+
+      const numPessoas = listaPessoas.length;
+      const porPessoa = numPessoas > 0 ? (total / numPessoas) : 0;
+
+      document.getElementById('totalCustos').textContent = formatarMoeda(total);
+      document.getElementById('qtdPessoas').textContent = numPessoas;
+      document.getElementById('valorPorPessoa').textContent = formatarMoeda(porPessoa);
+    }
+
+    carregarTudo();
+  </script>
+
+</body>
+</html>
